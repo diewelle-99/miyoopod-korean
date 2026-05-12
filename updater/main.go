@@ -1,8 +1,8 @@
 package main
 
 /*
-#cgo CFLAGS: -I/root/include/SDL2 -O2 -w -D_GNU_SOURCE=1 -D_REENTRANT
-#cgo LDFLAGS: -L/root/lib -Wl,-rpath-link,/root/lib -Wl,-rpath,'$ORIGIN' -Wl,--unresolved-symbols=ignore-in-shared-libs -lSDL2 -lpthread
+#cgo CFLAGS: -I/usr/include/SDL2 -I/usr/include/arm-linux-gnueabihf -O2 -w -D_GNU_SOURCE=1 -D_REENTRANT
+#cgo LDFLAGS: -L${SRCDIR}/../App/MiyooPod/libs -Wl,-rpath-link,${SRCDIR}/../App/MiyooPod/libs -Wl,-rpath,'$ORIGIN' -Wl,--unresolved-symbols=ignore-in-shared-libs -lSDL2 -lpthread
 #include <stdlib.h>
 #include "sdl.c"
 */

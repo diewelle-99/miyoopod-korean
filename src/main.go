@@ -1,8 +1,8 @@
 package main
 
 /*
-#cgo CFLAGS: -I/root/include/SDL2 -O2 -w -D_GNU_SOURCE=1 -D_REENTRANT
-#cgo LDFLAGS: -L/root/lib -Wl,-rpath-link,/root/lib -Wl,-rpath,'$ORIGIN' -Wl,--unresolved-symbols=ignore-in-shared-libs -lSDL2 -lSDL2_mixer -lpthread
+#cgo CFLAGS: -I/usr/include/SDL2 -I/usr/include/arm-linux-gnueabihf -O2 -w -D_GNU_SOURCE=1 -D_REENTRANT
+#cgo LDFLAGS: -L${SRCDIR}/../App/MiyooPod/libs -Wl,-rpath-link,${SRCDIR}/../App/MiyooPod/libs -Wl,-rpath,'$ORIGIN' -Wl,--unresolved-symbols=ignore-in-shared-libs -lSDL2 -lSDL2_mixer -lpthread
 #include <stdlib.h>
 #include "main.c"
 #include "audio.c"
@@ -664,7 +664,14 @@ func audioGetDuration() float64 {
 func audioGetDurationForFile(path string) float64 {
 	cpath := C.CString(path)
 	defer C.free(unsafe.Pointer(cpath))
-	return float64(C.audio_get_file_duration(cpath))
+
+	duration := float64(C.audio_get_file_duration(cpath))
+	if duration > 0 {
+		return duration
+	}
+
+	// Fallback for SDL_mixer builds that return 0/-1 for duration.
+	return estimateAudioDuration(path)
 }
 
 func audioSeek(position float64) {

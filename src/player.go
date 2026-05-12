@@ -77,7 +77,7 @@ func (app *MiyooPod) playCurrentQueueTrack() {
 		logMsg(fmt.Sprintf("ERROR: Failed to load: %v", err))
 		app.Playing.State = StateStopped
 		app.Playing.Track = nil // Clear track on failure
-		app.showError(fmt.Sprintf("Failed to load audio\n%s", err.Error()))
+		app.showError(fmt.Sprintf("오디오를 불러오지 못했습니다\n%s", err.Error()))
 		return
 	}
 
@@ -88,7 +88,7 @@ func (app *MiyooPod) playCurrentQueueTrack() {
 		logMsg("ERROR: Audio failed to start playing")
 		app.Playing.State = StateStopped
 		app.Playing.Track = nil
-		app.showError("Playback failed to start")
+		app.showError("재생을 시작하지 못했습니다")
 		return
 	}
 
@@ -337,10 +337,10 @@ func (app *MiyooPod) drawNowPlayingScreen() {
 	if app.Playing == nil || app.Playing.Track == nil {
 		dc.SetHexColor(app.CurrentTheme.BG)
 		dc.Clear()
-		app.drawHeader("Now Playing")
+		app.drawHeader("지금 재생 중")
 		dc.SetFontFace(app.FontMenu)
 		dc.SetHexColor(app.CurrentTheme.Dim)
-		dc.DrawStringAnchored("No track playing", SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 0.5, 0.5)
+		dc.DrawStringAnchored("재생 중인 곡이 없습니다", SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 0.5, 0.5)
 		return
 	}
 
@@ -396,7 +396,7 @@ func (app *MiyooPod) renderNowPlayingFull() {
 	dc.SetHexColor(app.CurrentTheme.BG)
 	dc.Clear()
 
-	app.drawHeader("Now Playing")
+	app.drawHeader("지금 재생 중")
 	app.DrawCoverflow()
 
 	// Track info on the right side of the album art
@@ -417,7 +417,7 @@ func (app *MiyooPod) renderNowPlayingFull() {
 	dc.DrawString(artistText, float64(infoX), float64(infoStartY+35))
 
 	// Album
-	if track.Album != "" && track.Album != "Unknown Album" {
+	if track.Album != "" && track.Album != "알 수 없는 앨범" && track.Album != "Unknown Album" {
 		albumText := app.truncateText(track.Album, maxWidth, app.FontArtist)
 		dc.DrawString(albumText, float64(infoX), float64(infoStartY+65))
 	}
@@ -425,9 +425,9 @@ func (app *MiyooPod) renderNowPlayingFull() {
 	// Track/Disc numbers if available
 	if track.TrackNum > 0 {
 		dc.SetFontFace(app.FontSmall)
-		trackInfo := fmt.Sprintf("Track %d", track.TrackNum)
+		trackInfo := fmt.Sprintf("트랙 %d", track.TrackNum)
 		if track.TrackTotal > 0 {
-			trackInfo = fmt.Sprintf("Track %d/%d", track.TrackNum, track.TrackTotal)
+			trackInfo = fmt.Sprintf("트랙 %d/%d", track.TrackNum, track.TrackTotal)
 		}
 		dc.DrawString(trackInfo, float64(infoX), float64(infoStartY+95))
 	}
@@ -435,8 +435,8 @@ func (app *MiyooPod) renderNowPlayingFull() {
 	// Control hints
 	dc.SetFontFace(app.FontSmall)
 	dc.SetHexColor(app.CurrentTheme.Dim)
-	dc.DrawString("Hold L/R to seek", float64(infoX), float64(infoStartY+125))
-	dc.DrawString("X Repeat · SELECT Shuffle", float64(infoX), float64(infoStartY+150))
+	dc.DrawString("L/R 길게: 탐색", float64(infoX), float64(infoStartY+125))
+	dc.DrawString("X 반복 · SELECT 셔플", float64(infoX), float64(infoStartY+150))
 
 	// Format tag (FLAC / MP3 / OGG + bitrate)
 	app.drawFormatTag(track, float64(infoX), float64(infoStartY+175))

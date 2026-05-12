@@ -21,7 +21,7 @@ func (app *MiyooPod) adjustVolume(delta int) {
 	// Persist to settings
 	go app.saveSettings()
 
-	logMsg(fmt.Sprintf("Volume: %d%%", newVolume))
+	logMsg(fmt.Sprintf("볼륨: %d%%", newVolume))
 }
 
 // adjustBrightness changes screen brightness and shows overlay
@@ -36,7 +36,7 @@ func (app *MiyooPod) adjustBrightness(delta int) {
 	// Persist to settings
 	go app.saveSettings()
 
-	logMsg(fmt.Sprintf("Brightness: %d%%", newBrightness))
+	logMsg(fmt.Sprintf("밝기: %d%%", newBrightness))
 }
 
 // showOverlay displays the volume/brightness overlay for 2 seconds

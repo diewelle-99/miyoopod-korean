@@ -15,7 +15,7 @@ func (app *MiyooPod) toggleLocalLogs() {
 
 	// Navigate to settings menu
 	for _, item := range app.RootMenu.Items {
-		if item.Label == "Settings" {
+		if item.Label == "설정" || item.Label == "Settings" {
 			app.MenuStack = append(app.MenuStack, item.Submenu)
 			break
 		}
@@ -52,7 +52,7 @@ func (app *MiyooPod) cycleAutoLock() {
 	app.MenuStack = []*MenuScreen{app.RootMenu}
 
 	for _, item := range app.RootMenu.Items {
-		if item.Label == "Settings" {
+		if item.Label == "설정" || item.Label == "Settings" {
 			app.MenuStack = append(app.MenuStack, item.Submenu)
 			break
 		}
@@ -74,7 +74,7 @@ func (app *MiyooPod) toggleScreenPeek() {
 	app.MenuStack = []*MenuScreen{app.RootMenu}
 
 	for _, item := range app.RootMenu.Items {
-		if item.Label == "Settings" {
+		if item.Label == "설정" || item.Label == "Settings" {
 			app.MenuStack = append(app.MenuStack, item.Submenu)
 			break
 		}
@@ -102,7 +102,7 @@ func (app *MiyooPod) toggleSentry() {
 
 	// Navigate to settings menu
 	for _, item := range app.RootMenu.Items {
-		if item.Label == "Settings" {
+		if item.Label == "설정" || item.Label == "Settings" {
 			app.MenuStack = append(app.MenuStack, item.Submenu)
 			break
 		}

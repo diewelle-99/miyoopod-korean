@@ -4,12 +4,8 @@ import (
 	"strings"
 )
 
-// Search grid layout: 7 columns, 5 rows
-// Row 0: A B C D E F G
-// Row 1: H I J K L M N
-// Row 2: O P Q R S T U
-// Row 3: V W X Y Z _ .
-// Row 4: 0 1 2 3 4 5 6 7 8 9
+// Search grid layout: English, numbers, and Korean initial consonants.
+// Korean search supports both full Hangul text and initial-consonant search.
 var searchGrid = [][]string{
 	{"A", "B", "C", "D", "E", "F", "G"},
 	{"H", "I", "J", "K", "L", "M", "N"},
@@ -17,13 +13,40 @@ var searchGrid = [][]string{
 	{"V", "W", "X", "Y", "Z", " ", "."},
 	{"0", "1", "2", "3", "4", "5", "6"},
 	{"7", "8", "9"},
+	{"ㄱ", "ㄴ", "ㄷ", "ㄹ", "ㅁ", "ㅂ", "ㅅ"},
+	{"ㅇ", "ㅈ", "ㅊ", "ㅋ", "ㅌ", "ㅍ", "ㅎ"},
 }
 
 const (
 	searchGridCols   = 7
-	searchGridRows   = 6
 	searchPanelWidth = 200 // Width of the search panel on the right
 )
+
+var searchGridRows = len(searchGrid)
+
+var koreanInitials = []rune{
+	'ㄱ', 'ㄲ', 'ㄴ', 'ㄷ', 'ㄸ', 'ㄹ',
+	'ㅁ', 'ㅂ', 'ㅃ', 'ㅅ', 'ㅆ', 'ㅇ',
+	'ㅈ', 'ㅉ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ',
+}
+
+func hangulInitials(s string) string {
+	var b strings.Builder
+	for _, r := range s {
+		if r >= 0xAC00 && r <= 0xD7A3 {
+			idx := (r - 0xAC00) / 588
+			b.WriteRune(koreanInitials[idx])
+		} else {
+			b.WriteRune(r)
+		}
+	}
+	return strings.ToLower(b.String())
+}
+
+func searchableText(s string) string {
+	lower := strings.ToLower(s)
+	return lower + " " + hangulInitials(lower)
+}
 
 // isSearchableMenu returns true if the current menu shows items that can be searched
 // (Artists, Albums, Songs, or Playlists lists — not the root menu or settings)
@@ -102,21 +125,21 @@ func (app *MiyooPod) filterMenuItems() {
 	}
 
 	current := app.MenuStack[len(app.MenuStack)-1]
-	query := strings.ToLower(app.SearchQuery)
+	query := searchableText(app.SearchQuery)
 
-	if query == "" {
+	if strings.TrimSpace(app.SearchQuery) == "" {
 		current.Items = app.SearchAllItems
 	} else {
 		filtered := make([]*MenuItem, 0)
 		for _, item := range app.SearchAllItems {
-			label := strings.ToLower(item.Label)
+			label := searchableText(item.Label)
 			// Also search artist name for tracks
 			artistMatch := false
 			if item.Track != nil {
-				artistMatch = strings.Contains(strings.ToLower(item.Track.Artist), query)
+				artistMatch = strings.Contains(searchableText(item.Track.Artist), query)
 			}
 			if item.Album != nil {
-				artistMatch = strings.Contains(strings.ToLower(item.Album.Artist), query)
+				artistMatch = strings.Contains(searchableText(item.Album.Artist), query)
 			}
 			if strings.Contains(label, query) || artistMatch {
 				filtered = append(filtered, item)
@@ -181,8 +204,9 @@ func (app *MiyooPod) handleSearchKey(key Key) bool {
 		app.filterMenuItems()
 	case X:
 		// Delete last character
-		if len(app.SearchQuery) > 0 {
-			app.SearchQuery = app.SearchQuery[:len(app.SearchQuery)-1]
+		runes := []rune(app.SearchQuery)
+		if len(runes) > 0 {
+			app.SearchQuery = string(runes[:len(runes)-1])
 			app.filterMenuItems()
 		}
 	case B:
@@ -219,7 +243,7 @@ func (app *MiyooPod) drawSearchPanel(panelX, panelY, panelW int) {
 		dc.DrawStringAnchored(queryText, float64(inputX+6), float64(inputY)+float64(inputH)/2, 0, 0.5)
 	} else {
 		dc.SetHexColor(app.CurrentTheme.Dim)
-		dc.DrawStringAnchored("Search...", float64(inputX+6), float64(inputY)+float64(inputH)/2, 0, 0.5)
+		dc.DrawStringAnchored("검색...", float64(inputX+6), float64(inputY)+float64(inputH)/2, 0, 0.5)
 	}
 
 	// Draw the character grid below the input
@@ -261,7 +285,7 @@ func (app *MiyooPod) drawSearchPanel(panelX, panelY, panelW int) {
 	dc.SetFontFace(app.FontSmall)
 	hintX := panelX + 8
 	lineH := 24.0
-	app.drawButtonLegend(hintX, float64(hintsY), "A", "Add Character")
-	app.drawButtonLegend(hintX, float64(hintsY)+lineH, "X", "Delete")
-	app.drawButtonLegend(hintX, float64(hintsY)+lineH*2, "B", "Close")
+	app.drawButtonLegend(hintX, float64(hintsY), "A", "글자 추가")
+	app.drawButtonLegend(hintX, float64(hintsY)+lineH, "X", "삭제")
+	app.drawButtonLegend(hintX, float64(hintsY)+lineH*2, "B", "닫기")
 }

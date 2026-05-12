@@ -178,12 +178,12 @@ func (app *MiyooPod) drawLyricsScreen() {
 	dc.SetHexColor(app.CurrentTheme.BG)
 	dc.Clear()
 
-	app.drawHeader("Lyrics")
+	app.drawHeader("가사")
 
 	if track == nil || track.Lyrics == "" {
 		dc.SetFontFace(app.FontMenu)
 		dc.SetHexColor(app.CurrentTheme.Dim)
-		dc.DrawStringAnchored("No lyrics available", SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 0.5, 0.5)
+		dc.DrawStringAnchored("가사가 없습니다", SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 0.5, 0.5)
 		app.drawStatusBar()
 		app.triggerRefresh()
 		return

@@ -20,7 +20,10 @@ func (app *MiyooPod) DrawCoverflow() {
 	}
 
 	album := cf.Albums[cf.CenterIndex]
-	coverImg := app.getCachedCover(album, COVER_CENTER_SIZE)
+	coverImg := app.getNowPlayingTrackCover(COVER_CENTER_SIZE)
+	if coverImg == nil {
+		coverImg = app.getCachedCover(album, COVER_CENTER_SIZE)
+	}
 	if coverImg == nil {
 		return
 	}

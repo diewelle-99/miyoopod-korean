@@ -29,7 +29,7 @@ func (app *MiyooPod) startLibraryScan(onComplete func()) {
 	app.LibScanDone = false
 	app.LibScanCount = 0
 	app.LibScanFolder = ""
-	app.LibScanStatus = "Starting scan..."
+	app.LibScanStatus = "스캔 시작 중..."
 	app.LibScanElapsed = ""
 	app.LibScanPhase = "scanning"
 
@@ -70,7 +70,7 @@ func (app *MiyooPod) runLibraryScan(onComplete func()) {
 			app.LibScanCount = fileCount
 
 			if fileCount%5 == 0 {
-				app.LibScanStatus = fmt.Sprintf("Found %d songs...", fileCount)
+				app.LibScanStatus = fmt.Sprintf("%d곡 찾음...", fileCount)
 				app.requestRedraw()
 			}
 
@@ -86,7 +86,7 @@ func (app *MiyooPod) runLibraryScan(onComplete func()) {
 
 	// Sort phase
 	app.LibScanPhase = "sorting"
-	app.LibScanStatus = "Sorting library..."
+	app.LibScanStatus = "라이브러리 정렬 중..."
 	app.requestRedraw()
 
 	sort.Slice(app.Library.Tracks, func(i, j int) bool {
@@ -119,14 +119,14 @@ func (app *MiyooPod) runLibraryScan(onComplete func()) {
 
 	// Decode album art
 	app.LibScanPhase = "decoding"
-	app.LibScanStatus = "Decoding album art..."
+	app.LibScanStatus = "앨범아트 처리 중..."
 	app.requestRedraw()
 
 	app.decodeAlbumArt()
 
 	// Save to JSON
 	app.LibScanPhase = "saving"
-	app.LibScanStatus = "Saving library..."
+	app.LibScanStatus = "라이브러리 저장 중..."
 	app.requestRedraw()
 
 	if err := app.saveLibraryJSON(); err != nil {
@@ -207,10 +207,10 @@ func (app *MiyooPod) scanTrack(path string) {
 		track.Title = strings.TrimSuffix(filepath.Base(path), filepath.Ext(path))
 	}
 	if track.Artist == "" {
-		track.Artist = "Unknown Artist"
+		track.Artist = "알 수 없는 아티스트"
 	}
 	if track.Album == "" {
-		track.Album = "Unknown Album"
+		track.Album = "알 수 없는 앨범"
 	}
 
 	// Register track
@@ -415,7 +415,7 @@ func (app *MiyooPod) decodeAlbumArt() {
 	dc.SetHexColor("#666666")
 	if app.FontSmall != nil {
 		dc.SetFontFace(app.FontSmall)
-		dc.DrawStringAnchored("No Art", float64(size)/2, float64(size)/2, 0.5, 0.5)
+		dc.DrawStringAnchored("아트 없음", float64(size)/2, float64(size)/2, 0.5, 0.5)
 	}
 	app.DefaultArt = dc.Image()
 	app.Coverflow.CoverCache[fmt.Sprintf("__default__%d", size)] = dc.Image()
@@ -529,7 +529,7 @@ func (app *MiyooPod) drawLibraryScanScreen() {
 	dc.SetHexColor(app.CurrentTheme.BG)
 	dc.Clear()
 
-	app.drawHeader("Scanning Library")
+	app.drawHeader("라이브러리 스캔")
 
 	if app.LibScanDone {
 		app.drawLibraryScanResults()
@@ -543,7 +543,7 @@ func (app *MiyooPod) drawLibraryScanScreen() {
 	dc.SetHexColor(app.CurrentTheme.ItemTxt)
 	textY := float64(y) + float64(MENU_ITEM_HEIGHT)/2
 	dc.DrawStringAnchored(
-		fmt.Sprintf("%d songs found", app.LibScanCount),
+		fmt.Sprintf("%d곡 찾음", app.LibScanCount),
 		float64(MENU_LEFT_PAD), textY, 0, 0.5,
 	)
 	y += MENU_ITEM_HEIGHT
@@ -583,9 +583,9 @@ func (app *MiyooPod) drawLibraryScanResults() {
 	dc.SetFontFace(app.FontMenu)
 	dc.SetHexColor(app.CurrentTheme.ItemTxt)
 	textY := float64(y) + float64(MENU_ITEM_HEIGHT)/2
-	title := "Scan complete"
+	title := "스캔 완료"
 	if app.LibScanElapsed != "" {
-		title = fmt.Sprintf("Scan complete in %s", app.LibScanElapsed)
+		title = fmt.Sprintf("%s 만에 스캔 완료", app.LibScanElapsed)
 	}
 	dc.DrawStringAnchored(title, float64(MENU_LEFT_PAD), textY, 0, 0.5)
 	y += MENU_ITEM_HEIGHT
@@ -601,7 +601,7 @@ func (app *MiyooPod) drawLibraryScanResults() {
 		dc.SetFontFace(app.FontMenu)
 		dc.SetHexColor(app.CurrentTheme.ItemTxt)
 		textY = float64(y) + float64(MENU_ITEM_HEIGHT)/2
-		dc.DrawStringAnchored("Tracks", float64(MENU_LEFT_PAD), textY, 0, 0.5)
+		dc.DrawStringAnchored("곡", float64(MENU_LEFT_PAD), textY, 0, 0.5)
 		dc.SetHexColor(app.CurrentTheme.Accent)
 		dc.DrawStringAnchored(fmt.Sprintf("%d", len(app.Library.Tracks)), float64(SCREEN_WIDTH-MENU_RIGHT_PAD), textY, 1, 0.5)
 		y += MENU_ITEM_HEIGHT
@@ -610,7 +610,7 @@ func (app *MiyooPod) drawLibraryScanResults() {
 		dc.SetFontFace(app.FontMenu)
 		dc.SetHexColor(app.CurrentTheme.ItemTxt)
 		textY = float64(y) + float64(MENU_ITEM_HEIGHT)/2
-		dc.DrawStringAnchored("Albums", float64(MENU_LEFT_PAD), textY, 0, 0.5)
+		dc.DrawStringAnchored("앨범", float64(MENU_LEFT_PAD), textY, 0, 0.5)
 		dc.SetHexColor(app.CurrentTheme.Accent)
 		dc.DrawStringAnchored(fmt.Sprintf("%d", len(app.Library.Albums)), float64(SCREEN_WIDTH-MENU_RIGHT_PAD), textY, 1, 0.5)
 		y += MENU_ITEM_HEIGHT
@@ -619,7 +619,7 @@ func (app *MiyooPod) drawLibraryScanResults() {
 		dc.SetFontFace(app.FontMenu)
 		dc.SetHexColor(app.CurrentTheme.ItemTxt)
 		textY = float64(y) + float64(MENU_ITEM_HEIGHT)/2
-		dc.DrawStringAnchored("Artists", float64(MENU_LEFT_PAD), textY, 0, 0.5)
+		dc.DrawStringAnchored("아티스트", float64(MENU_LEFT_PAD), textY, 0, 0.5)
 		dc.SetHexColor(app.CurrentTheme.Accent)
 		dc.DrawStringAnchored(fmt.Sprintf("%d", len(app.Library.Artists)), float64(SCREEN_WIDTH-MENU_RIGHT_PAD), textY, 1, 0.5)
 		y += MENU_ITEM_HEIGHT
@@ -629,7 +629,7 @@ func (app *MiyooPod) drawLibraryScanResults() {
 			dc.SetFontFace(app.FontMenu)
 			dc.SetHexColor(app.CurrentTheme.ItemTxt)
 			textY = float64(y) + float64(MENU_ITEM_HEIGHT)/2
-			dc.DrawStringAnchored("Playlists", float64(MENU_LEFT_PAD), textY, 0, 0.5)
+			dc.DrawStringAnchored("재생목록", float64(MENU_LEFT_PAD), textY, 0, 0.5)
 			dc.SetHexColor(app.CurrentTheme.Accent)
 			dc.DrawStringAnchored(fmt.Sprintf("%d", len(app.Library.Playlists)), float64(SCREEN_WIDTH-MENU_RIGHT_PAD), textY, 1, 0.5)
 		}
@@ -649,9 +649,9 @@ func (app *MiyooPod) drawLibraryScanStatusBar() {
 	centerY := barY + float64(STATUS_BAR_HEIGHT)/2
 
 	if app.LibScanDone {
-		app.drawButtonLegend(12, centerY, "B", "Back")
+		app.drawButtonLegend(12, centerY, "B", "뒤로")
 	} else {
-		app.drawButtonLegend(12, centerY, "", "Scanning...")
+		app.drawButtonLegend(12, centerY, "", "스캔 중...")
 	}
 }
 

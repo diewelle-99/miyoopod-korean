@@ -59,7 +59,7 @@ func (app *MiyooPod) drawUpdatePromptOverlay() {
 
 	dc.SetFontFace(app.FontHeader)
 	dc.SetHexColor(app.CurrentTheme.HeaderTxt)
-	dc.DrawStringAnchored("Update Available", SCREEN_WIDTH/2, HEADER_HEIGHT/2, 0.5, 0.5)
+	dc.DrawStringAnchored("업데이트 있음", SCREEN_WIDTH/2, HEADER_HEIGHT/2, 0.5, 0.5)
 
 	// Content area
 	contentY := float64(HEADER_HEIGHT) + 24
@@ -88,7 +88,7 @@ func (app *MiyooPod) drawUpdatePromptOverlay() {
 	if info.Size > 0 {
 		dc.SetFontFace(app.FontSmall)
 		dc.SetHexColor(app.CurrentTheme.Dim)
-		sizeStr := fmt.Sprintf("Download size: %.1f MB", float64(info.Size)/(1024*1024))
+		sizeStr := fmt.Sprintf("다운로드 크기: %.1f MB", float64(info.Size)/(1024*1024))
 		dc.DrawStringAnchored(sizeStr, SCREEN_WIDTH/2, contentY, 0.5, 0.5)
 	}
 
@@ -108,8 +108,8 @@ func (app *MiyooPod) drawUpdatePromptOverlay() {
 	// Button legends (same style as drawButtonLegend in status bar)
 	centerY := barY + float64(STATUS_BAR_HEIGHT)/2
 	dc.SetFontFace(app.FontSmall)
-	app.drawButtonLegend(12, centerY, "A", "Update Now")
-	app.drawButtonLegend(180, centerY, "B", "Later")
+	app.drawButtonLegend(12, centerY, "A", "지금 업데이트")
+	app.drawButtonLegend(180, centerY, "B", "나중에")
 
 	app.triggerRefresh()
 }
@@ -159,13 +159,13 @@ func (app *MiyooPod) launchUpdater() {
 	data, err := json.MarshalIndent(req, "", "  ")
 	if err != nil {
 		logMsg(fmt.Sprintf("ERROR: Failed to marshal update request: %v", err))
-		app.showError("Failed to prepare update")
+		app.showError("업데이트 준비 실패")
 		return
 	}
 
 	if err := os.WriteFile(UPDATE_INFO_PATH, data, 0644); err != nil {
 		logMsg(fmt.Sprintf("ERROR: Failed to write update request: %v", err))
-		app.showError("Failed to prepare update")
+		app.showError("업데이트 준비 실패")
 		return
 	}
 
@@ -175,7 +175,7 @@ func (app *MiyooPod) launchUpdater() {
 	dc.Clear()
 	dc.SetFontFace(app.FontTitle)
 	dc.SetHexColor(app.CurrentTheme.HeaderTxt)
-	dc.DrawStringAnchored("Launching updater...", SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 0.5, 0.5)
+	dc.DrawStringAnchored("업데이터 실행 중...", SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 0.5, 0.5)
 	app.triggerRefresh()
 	time.Sleep(500 * time.Millisecond)
 
@@ -208,7 +208,7 @@ func (app *MiyooPod) manualCheckForUpdates() {
 	dc.Clear()
 	dc.SetFontFace(app.FontMenu)
 	dc.SetHexColor(app.CurrentTheme.HeaderTxt)
-	dc.DrawStringAnchored("Checking for updates...", SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 0.5, 0.5)
+	dc.DrawStringAnchored("업데이트 확인 중...", SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 0.5, 0.5)
 	app.triggerRefresh()
 
 	// Run version check
@@ -226,10 +226,10 @@ func (app *MiyooPod) manualCheckForUpdates() {
 
 	if status == "Up to date" {
 		dc.SetHexColor(app.CurrentTheme.Accent)
-		dc.DrawStringAnchored(fmt.Sprintf("You're up to date (v%s)", APP_VERSION), SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 0.5, 0.5)
+		dc.DrawStringAnchored(fmt.Sprintf("최신 버전입니다 (v%s)", APP_VERSION), SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 0.5, 0.5)
 	} else {
 		dc.SetHexColor(app.CurrentTheme.Dim)
-		dc.DrawStringAnchored("Failed to check for updates", SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 0.5, 0.5)
+		dc.DrawStringAnchored("업데이트 확인 실패", SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 0.5, 0.5)
 	}
 
 	app.triggerRefresh()
@@ -269,12 +269,12 @@ func (app *MiyooPod) handleUpdateStatus() {
 
 		dc.SetFontFace(app.FontHeader)
 		dc.SetHexColor(app.CurrentTheme.HeaderTxt)
-		dc.DrawStringAnchored("Update Complete", SCREEN_WIDTH/2, HEADER_HEIGHT/2, 0.5, 0.5)
+		dc.DrawStringAnchored("업데이트 완료", SCREEN_WIDTH/2, HEADER_HEIGHT/2, 0.5, 0.5)
 
 		// Success message centered in content area
 		dc.SetFontFace(app.FontTitle)
 		dc.SetHexColor(app.CurrentTheme.Accent)
-		dc.DrawStringAnchored(fmt.Sprintf("Updated to v%s!", status.Version), SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 0.5, 0.5)
+		dc.DrawStringAnchored(fmt.Sprintf("v%s로 업데이트 완료!", status.Version), SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 0.5, 0.5)
 
 		app.triggerRefresh()
 		time.Sleep(2000 * time.Millisecond)
@@ -282,7 +282,7 @@ func (app *MiyooPod) handleUpdateStatus() {
 	} else {
 		// Show failure message
 		logMsg(fmt.Sprintf("ERROR: OTA update failed: %s", status.Error))
-		app.showError(fmt.Sprintf("Update failed: %s", status.Error))
+		app.showError(fmt.Sprintf("업데이트 실패: %s", status.Error))
 	}
 }
 
@@ -301,16 +301,16 @@ func (app *MiyooPod) clearAppData() {
 
 	dc.SetFontFace(app.FontHeader)
 	dc.SetHexColor(app.CurrentTheme.HeaderTxt)
-	dc.DrawStringAnchored("Clear App Data", SCREEN_WIDTH/2, HEADER_HEIGHT/2, 0.5, 0.5)
+	dc.DrawStringAnchored("앱 데이터 초기화", SCREEN_WIDTH/2, HEADER_HEIGHT/2, 0.5, 0.5)
 
 	// Warning message centered in content area
 	dc.SetFontFace(app.FontMenu)
 	dc.SetHexColor(app.CurrentTheme.ItemTxt)
-	dc.DrawStringAnchored("Clear all app data?", SCREEN_WIDTH/2, SCREEN_HEIGHT/2-20, 0.5, 0.5)
+	dc.DrawStringAnchored("앱 데이터를 모두 지울까요?", SCREEN_WIDTH/2, SCREEN_HEIGHT/2-20, 0.5, 0.5)
 
 	dc.SetFontFace(app.FontSmall)
 	dc.SetHexColor(app.CurrentTheme.Dim)
-	dc.DrawStringAnchored("This will reset settings and rescan your library", SCREEN_WIDTH/2, SCREEN_HEIGHT/2+16, 0.5, 0.5)
+	dc.DrawStringAnchored("설정 초기화 후 라이브러리를 다시 스캔합니다", SCREEN_WIDTH/2, SCREEN_HEIGHT/2+16, 0.5, 0.5)
 
 	// Status bar at bottom
 	barY := float64(SCREEN_HEIGHT - STATUS_BAR_HEIGHT)
@@ -326,8 +326,8 @@ func (app *MiyooPod) clearAppData() {
 
 	centerY := barY + float64(STATUS_BAR_HEIGHT)/2
 	dc.SetFontFace(app.FontSmall)
-	app.drawButtonLegend(12, centerY, "A", "Confirm")
-	app.drawButtonLegend(150, centerY, "B", "Cancel")
+	app.drawButtonLegend(12, centerY, "A", "확인")
+	app.drawButtonLegend(150, centerY, "B", "취소")
 
 	app.triggerRefresh()
 
@@ -361,7 +361,7 @@ func (app *MiyooPod) performClearAppData() {
 	dc.Clear()
 	dc.SetFontFace(app.FontMenu)
 	dc.SetHexColor(app.CurrentTheme.HeaderTxt)
-	dc.DrawStringAnchored("Clearing app data...", SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 0.5, 0.5)
+	dc.DrawStringAnchored("앱 데이터 삭제 중...", SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 0.5, 0.5)
 	app.triggerRefresh()
 
 	// Delete library cache
@@ -414,7 +414,7 @@ func (app *MiyooPod) toggleUpdateNotifications() {
 
 	// Navigate to settings menu
 	for _, item := range app.RootMenu.Items {
-		if item.Label == "Settings" {
+		if item.Label == "설정" || item.Label == "Settings" {
 			app.MenuStack = append(app.MenuStack, item.Submenu)
 			break
 		}

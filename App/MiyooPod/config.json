@@ -1,8 +1,8 @@
 {
-  "label": "MiyooPod",
+  "label": "MiyooPod.kr",
   "icon": "./assets/icn.png",
   "launch": "launch.sh",
-  "description": "MP3 player for the Miyoo Mini",
+  "description": "Miyoo Mini시리즈를 위한 MP3플레이어",
   "developer": "danilo.fragoso@gmail.com",
-  "version": "0.0.1"
+  "version": "0.0.6.kr"
 }

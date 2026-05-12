@@ -21,14 +21,14 @@ func (app *MiyooPod) buildRootMenu() *MenuScreen {
 	// Playlists
 	if len(app.Library.Playlists) > 0 {
 		playlistMenu := &MenuScreen{
-			Title:  "Playlists",
+			Title:  "재생목록",
 			Parent: root,
 			Builder: func() []*MenuItem {
 				return app.buildPlaylistMenuItems(root)
 			},
 		}
 		items = append(items, &MenuItem{
-			Label:      "Playlists",
+			Label:      "재생목록",
 			HasSubmenu: true,
 			Submenu:    playlistMenu,
 		})
@@ -37,14 +37,14 @@ func (app *MiyooPod) buildRootMenu() *MenuScreen {
 	// Artists
 	if len(app.Library.Artists) > 0 {
 		artistMenu := &MenuScreen{
-			Title:  "Artists",
+			Title:  "아티스트",
 			Parent: root,
 			Builder: func() []*MenuItem {
 				return app.buildArtistMenuItems(root)
 			},
 		}
 		items = append(items, &MenuItem{
-			Label:      "Artists",
+			Label:      "아티스트",
 			HasSubmenu: true,
 			Submenu:    artistMenu,
 		})
@@ -53,14 +53,14 @@ func (app *MiyooPod) buildRootMenu() *MenuScreen {
 	// Albums
 	if len(app.Library.Albums) > 0 {
 		albumMenu := &MenuScreen{
-			Title:  "Albums",
+			Title:  "앨범",
 			Parent: root,
 			Builder: func() []*MenuItem {
 				return app.buildAlbumMenuItems(root)
 			},
 		}
 		items = append(items, &MenuItem{
-			Label:      "Albums",
+			Label:      "앨범",
 			HasSubmenu: true,
 			Submenu:    albumMenu,
 		})
@@ -69,21 +69,21 @@ func (app *MiyooPod) buildRootMenu() *MenuScreen {
 	// Songs
 	if len(app.Library.Tracks) > 0 {
 		songMenu := &MenuScreen{
-			Title:  "Songs",
+			Title:  "노래",
 			Parent: root,
 			Builder: func() []*MenuItem {
 				return app.buildSongMenuItems()
 			},
 		}
 		items = append(items, &MenuItem{
-			Label:      "Songs",
+			Label:      "노래",
 			HasSubmenu: true,
 			Submenu:    songMenu,
 		})
 
 		// Shuffle All
 		items = append(items, &MenuItem{
-			Label: "Shuffle All",
+			Label: "전체 셔플",
 			Action: func() {
 				app.shuffleAllAndPlay()
 			},
@@ -92,7 +92,7 @@ func (app *MiyooPod) buildRootMenu() *MenuScreen {
 
 	// About
 	items = append(items, &MenuItem{
-		Label: "About",
+		Label: "정보",
 		Action: func() {
 			app.showAboutScreen()
 		},
@@ -100,21 +100,21 @@ func (app *MiyooPod) buildRootMenu() *MenuScreen {
 
 	// Settings
 	settingsMenu := &MenuScreen{
-		Title:  "Settings",
+		Title:  "설정",
 		Parent: root,
 		Builder: func() []*MenuItem {
 			return app.buildSettingsMenuItems(root)
 		},
 	}
 	items = append(items, &MenuItem{
-		Label:      "Settings",
+		Label:      "설정",
 		HasSubmenu: true,
 		Submenu:    settingsMenu,
 	})
 
 	// Scan Library
 	items = append(items, &MenuItem{
-		Label: "Scan Library",
+		Label: "라이브러리 스캔",
 		Action: func() {
 			app.rescanLibrary()
 		},
@@ -122,7 +122,7 @@ func (app *MiyooPod) buildRootMenu() *MenuScreen {
 
 	// Fetch Album Art
 	items = append(items, &MenuItem{
-		Label: "Fetch Album Art",
+		Label: "앨범아트 가져오기",
 		Action: func() {
 			app.scanAlbumArt()
 		},
@@ -130,7 +130,7 @@ func (app *MiyooPod) buildRootMenu() *MenuScreen {
 
 	// Exit
 	items = append(items, &MenuItem{
-		Label: "Exit",
+		Label: "종료",
 		Action: func() {
 			audioStop()
 			app.Running = false
@@ -253,61 +253,61 @@ func (app *MiyooPod) buildSettingsMenuItems(root *MenuScreen) []*MenuItem {
 
 	// Themes submenu
 	themesMenu := &MenuScreen{
-		Title:  "Themes",
+		Title:  "테마",
 		Parent: root,
 		Builder: func() []*MenuItem {
 			return app.buildThemeMenuItems(root)
 		},
 	}
 	items = append(items, &MenuItem{
-		Label:      "Themes",
+		Label:      "테마",
 		HasSubmenu: true,
 		Submenu:    themesMenu,
 	})
 
 	// Local Logs option
-	localLogStatus := "Off"
+	localLogStatus := "꺼짐"
 	if app.LocalLogsEnabled {
-		localLogStatus = "On"
+		localLogStatus = "켜짐"
 	}
 	items = append(items, &MenuItem{
-		Label: "Local Logs: " + localLogStatus,
+		Label: "로컬 로그: " + localLogStatus,
 		Action: func() {
 			app.toggleLocalLogs()
 		},
 	})
 
 	// Developer Logs (Sentry) option
-	sentryStatus := "Off"
+	sentryStatus := "꺼짐"
 	if app.SentryEnabled {
-		sentryStatus = "On"
+		sentryStatus = "켜짐"
 	}
 	items = append(items, &MenuItem{
-		Label: "Developer Logs: " + sentryStatus,
+		Label: "개발자 로그: " + sentryStatus,
 		Action: func() {
 			app.toggleSentry()
 		},
 	})
 
 	// Auto Screen Lock option
-	autoLockStatus := "Off"
+	autoLockStatus := "꺼짐"
 	if app.AutoLockMinutes > 0 {
 		autoLockStatus = fmt.Sprintf("%d min", app.AutoLockMinutes)
 	}
 	items = append(items, &MenuItem{
-		Label: "Auto Screen Lock: " + autoLockStatus,
+		Label: "자동 화면 잠금: " + autoLockStatus,
 		Action: func() {
 			app.cycleAutoLock()
 		},
 	})
 
 	// Screen Peek option
-	peekStatus := "Off"
+	peekStatus := "꺼짐"
 	if app.ScreenPeekEnabled {
-		peekStatus = "On"
+		peekStatus = "켜짐"
 	}
 	items = append(items, &MenuItem{
-		Label: "Screen Peek: " + peekStatus,
+		Label: "잠금 중 미리보기: " + peekStatus,
 		Action: func() {
 			app.toggleScreenPeek()
 		},
@@ -315,19 +315,19 @@ func (app *MiyooPod) buildSettingsMenuItems(root *MenuScreen) []*MenuItem {
 
 	// Check for Updates
 	items = append(items, &MenuItem{
-		Label: "Check for Updates",
+		Label: "업데이트 확인",
 		Action: func() {
 			app.manualCheckForUpdates()
 		},
 	})
 
 	// Update Notifications toggle
-	updateNotifStatus := "Off"
+	updateNotifStatus := "꺼짐"
 	if app.UpdateNotifications {
-		updateNotifStatus = "On"
+		updateNotifStatus = "켜짐"
 	}
 	items = append(items, &MenuItem{
-		Label: "Update Notifications: " + updateNotifStatus,
+		Label: "업데이트 알림: " + updateNotifStatus,
 		Action: func() {
 			app.toggleUpdateNotifications()
 		},
@@ -335,7 +335,7 @@ func (app *MiyooPod) buildSettingsMenuItems(root *MenuScreen) []*MenuItem {
 
 	// Clear App Data
 	items = append(items, &MenuItem{
-		Label: "Clear App Data",
+		Label: "앱 데이터 초기화",
 		Action: func() {
 			app.clearAppData()
 		},
@@ -553,7 +553,7 @@ func (app *MiyooPod) drawMenuWithSearchPanel(current *MenuScreen) {
 	if len(current.Items) == 0 {
 		dc.SetFontFace(app.FontMenu)
 		dc.SetHexColor(app.CurrentTheme.Dim)
-		dc.DrawStringAnchored("No results", float64(listWidth)/2, SCREEN_HEIGHT/2, 0.5, 0.5)
+		dc.DrawStringAnchored("결과 없음", float64(listWidth)/2, SCREEN_HEIGHT/2, 0.5, 0.5)
 	} else {
 		endIdx := current.ScrollOff + VISIBLE_ITEMS
 		if endIdx > len(current.Items) {
@@ -623,7 +623,7 @@ func (app *MiyooPod) drawStandardMenu(current *MenuScreen) {
 	if len(current.Items) == 0 {
 		dc.SetFontFace(app.FontMenu)
 		dc.SetHexColor(app.CurrentTheme.Dim)
-		dc.DrawStringWrapped("No items", SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 0.5, 0.5, 400, 1.5, gg.AlignCenter)
+		dc.DrawStringWrapped("항목 없음", SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 0.5, 0.5, 400, 1.5, gg.AlignCenter)
 		return
 	}
 
@@ -660,7 +660,7 @@ func (app *MiyooPod) drawAlbumListWithPreview(current *MenuScreen) {
 	if len(current.Items) == 0 {
 		dc.SetFontFace(app.FontMenu)
 		dc.SetHexColor(app.CurrentTheme.Dim)
-		dc.DrawStringWrapped("No items", SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 0.5, 0.5, 400, 1.5, gg.AlignCenter)
+		dc.DrawStringWrapped("항목 없음", SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 0.5, 0.5, 400, 1.5, gg.AlignCenter)
 		return
 	}
 
@@ -782,10 +782,7 @@ func (app *MiyooPod) drawAlbumPreview(album *Album, x, y, width int) {
 	dc.SetFontFace(app.FontSmall)
 	dc.SetHexColor(app.CurrentTheme.ItemTxt)
 
-	trackText := fmt.Sprintf("%d track", len(album.Tracks))
-	if len(album.Tracks) != 1 {
-		trackText += "s"
-	}
+	trackText := fmt.Sprintf("%d곡", len(album.Tracks))
 
 	if year > 0 {
 		dc.DrawStringAnchored(fmt.Sprintf("%s • %d", trackText, year), float64(centerX), float64(yPos), 0.5, 0)
@@ -802,7 +799,7 @@ func (app *MiyooPod) refreshRootMenu() {
 
 	hasNowPlaying := false
 	for _, item := range app.RootMenu.Items {
-		if item.Label == "Now Playing" {
+		if item.Label == "지금 재생 중" || item.Label == "Now Playing" {
 			hasNowPlaying = true
 			break
 		}
@@ -813,7 +810,7 @@ func (app *MiyooPod) refreshRootMenu() {
 	if isPlaying && !hasNowPlaying {
 		// Insert Now Playing at the top
 		nowPlayingItem := &MenuItem{
-			Label: "Now Playing",
+			Label: "지금 재생 중",
 			Action: func() {
 				app.setScreen(ScreenNowPlaying)
 				app.drawCurrentScreen()
@@ -827,7 +824,7 @@ func (app *MiyooPod) refreshRootMenu() {
 	} else if !isPlaying && hasNowPlaying {
 		// Remove Now Playing
 		for i, item := range app.RootMenu.Items {
-			if item.Label == "Now Playing" {
+			if item.Label == "지금 재생 중" || item.Label == "Now Playing" {
 				app.RootMenu.Items = append(app.RootMenu.Items[:i], app.RootMenu.Items[i+1:]...)
 				// Adjust selection to prevent going negative
 				if app.RootMenu.SelIndex > i {

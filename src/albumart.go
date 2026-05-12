@@ -31,7 +31,7 @@ func (app *MiyooPod) scanAlbumArt() {
 		app.AlbumArtFetched = 0
 		app.AlbumArtFailed = 0
 		app.AlbumArtTotal = 0
-		app.AlbumArtStatus = "All albums have artwork!"
+		app.AlbumArtStatus = "모든 앨범에 앨범아트가 있습니다!"
 		app.AlbumArtAlbumName = ""
 		app.AlbumArtArtist = ""
 		app.setScreen(ScreenAlbumArt)
@@ -48,7 +48,7 @@ func (app *MiyooPod) scanAlbumArt() {
 	app.AlbumArtFailed = 0
 	app.AlbumArtAlbumName = ""
 	app.AlbumArtArtist = ""
-	app.AlbumArtStatus = "Starting..."
+	app.AlbumArtStatus = "시작 중..."
 	app.AlbumArtElapsed = ""
 
 	app.setScreen(ScreenAlbumArt)
@@ -71,7 +71,7 @@ func (app *MiyooPod) runAlbumArtFetch() {
 			app.AlbumArtCurrent++
 			app.AlbumArtAlbumName = album.Name
 			app.AlbumArtArtist = album.Artist
-			app.AlbumArtStatus = "Searching MusicBrainz..."
+			app.AlbumArtStatus = "MusicBrainz 검색 중..."
 			app.requestRedraw()
 
 			// Status callback updates state and signals redraw (no draw calls)
@@ -92,7 +92,7 @@ func (app *MiyooPod) runAlbumArtFetch() {
 
 	// Decode newly fetched artwork
 	if app.AlbumArtFetched > 0 {
-		app.AlbumArtStatus = "Decoding artwork..."
+		app.AlbumArtStatus = "앨범아트 처리 중..."
 		app.AlbumArtAlbumName = ""
 		app.AlbumArtArtist = ""
 		app.requestRedraw()
@@ -119,7 +119,7 @@ func (app *MiyooPod) drawAlbumArtScreen() {
 	dc.SetHexColor(app.CurrentTheme.BG)
 	dc.Clear()
 
-	app.drawHeader("Fetch Album Art")
+	app.drawHeader("앨범아트 가져오기")
 
 	if app.AlbumArtDone {
 		app.drawAlbumArtResults()
@@ -134,7 +134,7 @@ func (app *MiyooPod) drawAlbumArtScreen() {
 	dc.SetHexColor(app.CurrentTheme.ItemTxt)
 	textY := float64(y) + float64(MENU_ITEM_HEIGHT)/2
 	dc.DrawStringAnchored(
-		fmt.Sprintf("Scanning %d of %d albums", app.AlbumArtCurrent, app.AlbumArtTotal),
+		fmt.Sprintf("앨범 %d / %d 스캔 중", app.AlbumArtCurrent, app.AlbumArtTotal),
 		float64(MENU_LEFT_PAD), textY, 0, 0.5,
 	)
 
@@ -202,11 +202,11 @@ func (app *MiyooPod) drawAlbumArtScreen() {
 		textY = float64(y) + float64(MENU_ITEM_HEIGHT)/2
 
 		dc.SetHexColor(app.CurrentTheme.Accent)
-		dc.DrawStringAnchored(fmt.Sprintf("Fetched: %d", app.AlbumArtFetched), float64(MENU_LEFT_PAD), textY, 0, 0.5)
+		dc.DrawStringAnchored(fmt.Sprintf("가져옴: %d", app.AlbumArtFetched), float64(MENU_LEFT_PAD), textY, 0, 0.5)
 
 		if app.AlbumArtFailed > 0 {
 			dc.SetHexColor(app.CurrentTheme.Dim)
-			dc.DrawStringAnchored(fmt.Sprintf("Failed: %d", app.AlbumArtFailed), float64(MENU_LEFT_PAD+150), textY, 0, 0.5)
+			dc.DrawStringAnchored(fmt.Sprintf("실패: %d", app.AlbumArtFailed), float64(MENU_LEFT_PAD+150), textY, 0, 0.5)
 		}
 	}
 }
@@ -220,12 +220,12 @@ func (app *MiyooPod) drawAlbumArtResults() {
 	dc.SetFontFace(app.FontMenu)
 	dc.SetHexColor(app.CurrentTheme.ItemTxt)
 	textY := float64(y) + float64(MENU_ITEM_HEIGHT)/2
-	title := "Scan complete"
+	title := "스캔 완료"
 	if app.AlbumArtElapsed != "" {
-		title = fmt.Sprintf("Scan complete in %s", app.AlbumArtElapsed)
+		title = fmt.Sprintf("%s 만에 스캔 완료", app.AlbumArtElapsed)
 	}
 	if app.AlbumArtTotal == 0 {
-		title = app.AlbumArtStatus // "All albums have artwork!"
+		title = app.AlbumArtStatus // "모든 앨범에 앨범아트가 있습니다!"
 	}
 	dc.DrawStringAnchored(title, float64(MENU_LEFT_PAD), textY, 0, 0.5)
 	y += MENU_ITEM_HEIGHT
@@ -242,7 +242,7 @@ func (app *MiyooPod) drawAlbumArtResults() {
 		dc.SetFontFace(app.FontMenu)
 		dc.SetHexColor(app.CurrentTheme.ItemTxt)
 		textY = float64(y) + float64(MENU_ITEM_HEIGHT)/2
-		dc.DrawStringAnchored("Fetched", float64(MENU_LEFT_PAD), textY, 0, 0.5)
+		dc.DrawStringAnchored("가져옴", float64(MENU_LEFT_PAD), textY, 0, 0.5)
 		dc.SetHexColor(app.CurrentTheme.Accent)
 		dc.DrawStringAnchored(fmt.Sprintf("%d", app.AlbumArtFetched), float64(SCREEN_WIDTH-MENU_RIGHT_PAD), textY, 1, 0.5)
 		y += MENU_ITEM_HEIGHT
@@ -252,7 +252,7 @@ func (app *MiyooPod) drawAlbumArtResults() {
 			dc.SetFontFace(app.FontMenu)
 			dc.SetHexColor(app.CurrentTheme.ItemTxt)
 			textY = float64(y) + float64(MENU_ITEM_HEIGHT)/2
-			dc.DrawStringAnchored("Failed", float64(MENU_LEFT_PAD), textY, 0, 0.5)
+			dc.DrawStringAnchored("실패", float64(MENU_LEFT_PAD), textY, 0, 0.5)
 			dc.SetHexColor(app.CurrentTheme.Dim)
 			dc.DrawStringAnchored(fmt.Sprintf("%d", app.AlbumArtFailed), float64(SCREEN_WIDTH-MENU_RIGHT_PAD), textY, 1, 0.5)
 			y += MENU_ITEM_HEIGHT
@@ -264,7 +264,7 @@ func (app *MiyooPod) drawAlbumArtResults() {
 			dc.SetFontFace(app.FontMenu)
 			dc.SetHexColor(app.CurrentTheme.ItemTxt)
 			textY = float64(y) + float64(MENU_ITEM_HEIGHT)/2
-			dc.DrawStringAnchored("Still missing", float64(MENU_LEFT_PAD), textY, 0, 0.5)
+			dc.DrawStringAnchored("아직 없음", float64(MENU_LEFT_PAD), textY, 0, 0.5)
 			dc.SetHexColor(app.CurrentTheme.Dim)
 			dc.DrawStringAnchored(fmt.Sprintf("%d", stillMissing), float64(SCREEN_WIDTH-MENU_RIGHT_PAD), textY, 1, 0.5)
 		}
@@ -285,13 +285,13 @@ func (app *MiyooPod) drawAlbumArtStatusBar() {
 	centerY := barY + float64(STATUS_BAR_HEIGHT)/2
 
 	if app.AlbumArtDone {
-		app.drawButtonLegend(12, centerY, "B", "Back")
+		app.drawButtonLegend(12, centerY, "B", "뒤로")
 		stillMissing := app.AlbumArtTotal - app.AlbumArtFetched
 		if stillMissing > 0 {
-			app.drawButtonLegend(100, centerY, "A", "Retry")
+			app.drawButtonLegend(100, centerY, "A", "다시 시도")
 		}
 	} else {
-		app.drawButtonLegend(12, centerY, "B", "Cancel")
+		app.drawButtonLegend(12, centerY, "B", "취소")
 	}
 }
 

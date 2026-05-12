@@ -21,12 +21,12 @@ func (app *MiyooPod) drawQueueScreen() {
 	dc.SetHexColor(app.CurrentTheme.BG)
 	dc.Clear()
 
-	app.drawHeader("Queue")
+	app.drawHeader("대기열")
 
 	if app.Queue == nil || len(app.Queue.Tracks) == 0 {
 		dc.SetFontFace(app.FontMenu)
 		dc.SetHexColor(app.CurrentTheme.Dim)
-		dc.DrawStringAnchored("Queue is empty", SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 0.5, 0.5)
+		dc.DrawStringAnchored("대기열이 비어 있습니다", SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 0.5, 0.5)
 		return
 	}
 

@@ -677,18 +677,18 @@ func (app *MiyooPod) drawStatusBar() {
 	switch app.CurrentScreen {
 	case ScreenMenu:
 		if app.SearchActive {
-			app.drawButtonLegend(12, centerY, "A", "Add Char")
-			app.drawButtonLegend(140, centerY, "X", "Delete")
-			app.drawButtonLegend(250, centerY, "B", "Close")
+			app.drawButtonLegend(12, centerY, "A", "글자 추가")
+			app.drawButtonLegend(140, centerY, "X", "삭제")
+			app.drawButtonLegend(250, centerY, "B", "닫기")
 		} else {
-			app.drawButtonLegend(12, centerY, "A", "Select")
-			app.drawButtonLegend(130, centerY, "B", "Back")
+			app.drawButtonLegend(12, centerY, "A", "선택")
+			app.drawButtonLegend(130, centerY, "B", "뒤로")
 			if app.Playing != nil && app.Playing.State != StateStopped {
-				app.drawButtonLegend(235, centerY, "START", "Now Playing")
+				app.drawButtonLegend(235, centerY, "START", "지금 재생")
 			}
 			// Show search hint and "Add to Queue" on searchable lists
 			if app.isSearchableMenu() {
-				app.drawButtonLegend(480, centerY, "SEL", "Search")
+				app.drawButtonLegend(480, centerY, "SEL", "검색")
 			}
 			if len(app.MenuStack) > 0 {
 				current := app.MenuStack[len(app.MenuStack)-1]
@@ -696,30 +696,30 @@ func (app *MiyooPod) drawStatusBar() {
 					firstItem := current.Items[0]
 					if firstItem.Track != nil || firstItem.Album != nil || firstItem.Artist != nil {
 						if app.Playing == nil || app.Playing.State == StateStopped {
-							app.drawButtonLegend(360, centerY, "Y", "Add to Q")
+							app.drawButtonLegend(360, centerY, "Y", "대기열 추가")
 						}
 					}
 				}
 			}
 		}
 	case ScreenNowPlaying:
-		app.drawButtonLegend(12, centerY, "B", "Back")
-		app.drawButtonLegend(110, centerY, "A", "Play/Pause")
-		app.drawButtonLegend(270, centerY, "L/R", "Prev/Next")
-		app.drawButtonLegend(400, centerY, "→", "Queue")
+		app.drawButtonLegend(12, centerY, "B", "뒤로")
+		app.drawButtonLegend(110, centerY, "A", "재생/일시정지")
+		app.drawButtonLegend(270, centerY, "L/R", "이전/다음")
+		app.drawButtonLegend(400, centerY, "→", "대기열")
 		if app.Playing != nil && app.Playing.Track != nil && app.Playing.Track.Lyrics != "" {
-			app.drawButtonLegend(510, centerY, "START", "Lyrics")
+			app.drawButtonLegend(510, centerY, "START", "가사")
 		}
 	case ScreenQueue:
-		app.drawButtonLegend(12, centerY, "B", "Back")
-		app.drawButtonLegend(100, centerY, "A", "Play")
-		app.drawButtonLegend(200, centerY, "X", "Remove")
-		app.drawButtonLegend(320, centerY, "SELECT", "Clear All")
+		app.drawButtonLegend(12, centerY, "B", "뒤로")
+		app.drawButtonLegend(100, centerY, "A", "재생")
+		app.drawButtonLegend(200, centerY, "X", "제거")
+		app.drawButtonLegend(320, centerY, "SELECT", "전체 비우기")
 	case ScreenLyrics:
-		app.drawButtonLegend(12, centerY, "B", "Back")
-		app.drawButtonLegend(110, centerY, "↑↓", "Scroll")
+		app.drawButtonLegend(12, centerY, "B", "뒤로")
+		app.drawButtonLegend(110, centerY, "↑↓", "스크롤")
 		if app.LyricsManualScroll {
-			app.drawButtonLegend(230, centerY, "A", "Auto-follow")
+			app.drawButtonLegend(230, centerY, "A", "자동 따라가기")
 		}
 	}
 
@@ -941,23 +941,23 @@ func (app *MiyooPod) drawLockOverlay() {
 	dc.DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)
 	dc.Fill()
 
-	// "LOCKED" text
+	// "잠김" text
 	centerX := SCREEN_WIDTH / 2.0
 	centerY := SCREEN_HEIGHT / 2.0
 
 	dc.SetFontFace(app.FontTitle)
 	dc.SetHexColor("#FFFFFF")
-	dc.DrawStringAnchored("LOCKED", centerX, centerY-15, 0.5, 0.5)
+	dc.DrawStringAnchored("잠김", centerX, centerY-15, 0.5, 0.5)
 
 	// Hint text
 	dc.SetFontFace(app.FontSmall)
 	dc.SetHexColor("#CCCCCC")
 	lockKeyName := app.getLockKeyName()
-	dc.DrawStringAnchored(fmt.Sprintf("Press POWER or double-press %s to unlock", lockKeyName), centerX, centerY+15, 0.5, 0.5)
+	dc.DrawStringAnchored(fmt.Sprintf("전원 버튼 또는 %s 두 번: 잠금 해제", lockKeyName), centerX, centerY+15, 0.5, 0.5)
 
 	// Force quit hint
 	dc.SetHexColor("#999999")
-	dc.DrawStringAnchored("Hold POWER for 5s to force quit", centerX, centerY+40, 0.5, 0.5)
+	dc.DrawStringAnchored("전원 버튼 5초: 강제 종료", centerX, centerY+40, 0.5, 0.5)
 }
 
 // getBrightness reads the current PWM duty_cycle (brightness level)

@@ -1,25 +1,46 @@
 package main
 
-import (
-	"time"
-)
+import "time"
 
 // startPlaybackPoller checks audio state and updates progress display.
-// Runs in its own goroutine. Minimal work per tick to avoid starving audio.
+// If SDL_mixer cannot report music position correctly, fall back to a local timer.
 func (app *MiyooPod) startPlaybackPoller() {
 	lastDrawnSecond := -1
 	tickCount := 0
 	saveTickCount := 0
 
+	lastTick := time.Now()
+	lastTrackPath := ""
+	lastAudioPosition := 0.0
+
 	for app.Running {
+		now := time.Now()
+		elapsed := now.Sub(lastTick).Seconds()
+		if elapsed <= 0 || elapsed > 2.5 {
+			elapsed = 1.0
+		}
+		lastTick = now
+
 		if app.Playing != nil && app.Playing.State != StateStopped {
+			trackPath := ""
+			if app.Playing.Track != nil {
+				trackPath = app.Playing.Track.Path
+			}
+
+			if trackPath != lastTrackPath {
+				lastTrackPath = trackPath
+				lastAudioPosition = 0
+				lastDrawnSecond = -1
+				lastTick = now
+			}
+
 			state := audioGetState()
 
-			if state.Position >= 0 {
-				app.Playing.Position = state.Position
-			}
-			if state.Duration > 0 && app.Playing.Track != nil && app.Playing.Track.Duration == 0 {
-				app.Playing.Track.Duration = state.Duration
+			if state.Duration > 0 {
+				app.Playing.Duration = state.Duration
+				if app.Playing.Track != nil && app.Playing.Track.Duration == 0 {
+					app.Playing.Track.Duration = state.Duration
+				}
 			}
 
 			if state.IsPaused && app.Playing.State != StatePaused {
@@ -32,11 +53,28 @@ func (app *MiyooPod) startPlaybackPoller() {
 				app.requestRedraw()
 			}
 
+			if state.IsPlaying {
+				// Normal path: SDL_mixer reports position.
+				if state.Position > 0 && state.Position >= lastAudioPosition {
+					app.Playing.Position = state.Position
+					lastAudioPosition = state.Position
+				} else {
+					// Fallback path: SDL_mixer returns 0/-1 forever.
+					app.Playing.Position += elapsed
+					if app.Playing.Duration > 0 && app.Playing.Position > app.Playing.Duration {
+						app.Playing.Position = app.Playing.Duration
+					}
+				}
+			} else if state.Position > 0 {
+				app.Playing.Position = state.Position
+				lastAudioPosition = state.Position
+			}
+
 			if state.Finished {
+				lastAudioPosition = 0
 				app.handleTrackEnd()
 			}
 
-			// Update progress bar when on Now Playing screen and second changes
 			if app.CurrentScreen == ScreenNowPlaying {
 				currentSecond := int(app.Playing.Position)
 				if currentSecond != lastDrawnSecond {
@@ -45,8 +83,6 @@ func (app *MiyooPod) startPlaybackPoller() {
 				}
 			}
 
-			// Redraw lyrics screen only when the highlighted LRC line changes,
-			// and only when the user is not holding a scroll key (avoids flash during scroll).
 			if app.CurrentScreen == ScreenLyrics && app.LyricsCachedLRC != nil && app.LastKey == NONE {
 				activeLRC := activeLRCIndex(app.LyricsCachedLRC, app.Playing.Position)
 				if activeLRC != app.LyricsLastActiveLRC {
@@ -55,28 +91,24 @@ func (app *MiyooPod) startPlaybackPoller() {
 				}
 			}
 
-			// Flush audio buffers every 5 seconds to prevent choppy playback
-			// Mimics the fix that happens when user manually pauses/resumes
 			tickCount++
 			if tickCount >= 5 {
 				audioFlushBuffers()
 				tickCount = 0
 			}
 
-			// Save playback state every 3 seconds during active playback
 			saveTickCount++
 			if saveTickCount >= 3 {
 				app.savePlaybackState()
 				saveTickCount = 0
 			}
 		}
-		// Increased sleep to reduce CPU usage and SD card contention
+
 		time.Sleep(1000 * time.Millisecond)
 	}
 }
 
 func (app *MiyooPod) mpvLoadFile(path string) error {
-	// Stream from SD card with larger buffer (128KB) to reduce underruns
 	err := audioLoadFile(path)
 	if err != nil {
 		return err
@@ -96,6 +128,7 @@ func (app *MiyooPod) mpvSeek(seconds float64) {
 	if app.Playing == nil {
 		return
 	}
+
 	newPos := app.Playing.Position + seconds
 	if newPos < 0 {
 		newPos = 0
@@ -103,5 +136,9 @@ func (app *MiyooPod) mpvSeek(seconds float64) {
 	if newPos > app.Playing.Duration && app.Playing.Duration > 0 {
 		newPos = app.Playing.Duration
 	}
+
 	audioSeek(newPos)
+	app.Playing.Position = newPos
+	app.NPCacheDirty = true
+	app.requestRedraw()
 }

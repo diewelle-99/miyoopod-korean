@@ -17,25 +17,25 @@ func (app *MiyooPod) showAboutScreen() {
 	// Title
 	dc.SetFontFace(app.FontTitle)
 	dc.SetHexColor(app.CurrentTheme.HeaderTxt)
-	dc.DrawStringAnchored("About MiyooPod", SCREEN_WIDTH/2, 30, 0.5, 0.5)
+	dc.DrawStringAnchored("MiyooPod 정보", SCREEN_WIDTH/2, 30, 0.5, 0.5)
 
 	// Version and author info
 	dc.SetFontFace(app.FontMenu)
 	dc.SetHexColor(app.CurrentTheme.ItemTxt)
 
 	yPos := 80
-	dc.DrawStringAnchored("Version: "+APP_VERSION, SCREEN_WIDTH/2, float64(yPos), 0.5, 0.5)
+	dc.DrawStringAnchored("버전: "+APP_VERSION, SCREEN_WIDTH/2, float64(yPos), 0.5, 0.5)
 
 	yPos += 30
-	dc.DrawStringAnchored("Created by: "+APP_AUTHOR, SCREEN_WIDTH/2, float64(yPos), 0.5, 0.5)
+	dc.DrawStringAnchored("제작자: "+APP_AUTHOR, SCREEN_WIDTH/2, float64(yPos), 0.5, 0.5)
 
 	yPos += 40
 	dc.SetFontFace(app.FontSmall)
 	dc.SetHexColor(app.CurrentTheme.Dim)
-	dc.DrawStringAnchored("A music player for Miyoo Mini", SCREEN_WIDTH/2, float64(yPos), 0.5, 0.5)
+	dc.DrawStringAnchored("Miyoo Mini용 음악 플레이어", SCREEN_WIDTH/2, float64(yPos), 0.5, 0.5)
 
 	yPos += 20
-	dc.DrawStringAnchored("Inspired by classic music players", SCREEN_WIDTH/2, float64(yPos), 0.5, 0.5)
+	dc.DrawStringAnchored("클래식 음악 플레이어에서 영감", SCREEN_WIDTH/2, float64(yPos), 0.5, 0.5)
 
 	// Generate QR code
 	qr, err := qrcode.New(SUPPORT_URL, qrcode.Medium)
@@ -51,13 +51,13 @@ func (app *MiyooPod) showAboutScreen() {
 		// QR code label
 		dc.SetFontFace(app.FontSmall)
 		dc.SetHexColor(app.CurrentTheme.ItemTxt)
-		dc.DrawStringAnchored("Support this project", SCREEN_WIDTH/2, float64(qrY+qrSize+20), 0.5, 0.5)
+		dc.DrawStringAnchored("프로젝트 후원", SCREEN_WIDTH/2, float64(qrY+qrSize+20), 0.5, 0.5)
 	}
 
 	// Instructions
 	dc.SetFontFace(app.FontSmall)
 	dc.SetHexColor(app.CurrentTheme.Dim)
-	dc.DrawStringAnchored("Press B to return", SCREEN_WIDTH/2, SCREEN_HEIGHT-20, 0.5, 0.5)
+	dc.DrawStringAnchored("B 버튼: 돌아가기", SCREEN_WIDTH/2, SCREEN_HEIGHT-20, 0.5, 0.5)
 
 	app.triggerRefresh()
 
