@@ -295,7 +295,6 @@ zip -r ~/MiyooPod-Korean.zip MiyooPod
 - 🖼️ 곡 변경 시 Now Playing 화면 캐시를 갱신하도록 수정
 - 🧪 Ubuntu 20.04 WSL + `arm-linux-gnueabihf-gcc` 환경에서 ARM 32-bit 빌드 확인
 - 🧪 `GLIBC_2.4` 기준 빌드 확인
-- ⚠️ Miyoo Flip / SpruceUI 전용 포팅은 아직 미완료
 
 ### Version 0.0.6
 
